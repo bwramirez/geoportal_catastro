@@ -7,265 +7,80 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Visor por demanda - Geoportal Santa Rosa</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" rel="stylesheet"/>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #e4f1f9;
+  <style>
+    /* --- Layout fijo con colores originales y divisor visual --- */
+    html, body {
+      height: 100%;
       margin: 0;
-    }
-
-    #sidebar {
-  background: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  max-width: 320px;
-  font-size: 14px;
-  backdrop-filter: blur(4px);
-
-  background: linear-gradient(to bottom, #f8fbfc, #d9e9ef);
-  border: 2px solid #005f48;
-  border-radius: 12px;
-  padding: 15px 18px 40px 18px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.15);
-  backdrop-filter: blur(4px);
-
-  top: 80px !important;
-  left: 10px !important;
-      background: #d1ecf9;
-      border: 2px solid #127a5e;
-      border-radius: 8px;
-      padding: 10px 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-
-    #sidebar h3 {
-      font-size: 15px;
-      font-weight: 700;
-      color: #0d5c4d;
-      border-bottom: 1px solid #127a5e;
-      padding-bottom: 4px;
-    }
-
-    #sidebar label {
-      font-size: 13px;
-      display: block;
-      margin: 5px 0;
-      color: #0d5c4d;
-    }
-
-    #sidebar input[type="checkbox"] {
-      margin-right: 6px;
-      transform: scale(1.1);
-      accent-color: #127a5e;
-    }
-
-    .leaflet-popup-content {
-      font-size: 12.5px;
-      line-height: 1.4;
-      color: #1c1c1c;
-    }
-
-    .leaflet-popup-content b {
-      color: #127a5e;
-    }
-
-    .leaflet-container {
-      background: #dcecf4;
-    }
-
-    #sidebar div[style*="background-color:#005ea8"] {
-      background-color: #127a5e !important;
-      border-radius: 6px;
-      box-shadow: inset 0 0 0 2px #ffffff;
-    }
-
-    #sidebar h2 {
+      padding: 0;
+      background-color: #e4f1f9;
       font-family: 'Roboto', sans-serif;
-      font-size: 18px;
-      letter-spacing: 1px;
     }
-
     .topbar {
-      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      /* Color original en gradiente */
       background: linear-gradient(to right, #127a5e, #198d72);
       color: white;
-      padding: 8px 20px;
-      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.25rem;
       font-weight: bold;
+      padding: 8px 20px;
+      line-height: 1.2;
+      /* Sombra de texto original */
       text-shadow: 1px 1px #075f46;
-    }
-
-    .leaflet-control-attribution {
-      font-size: 10px;
-      color: #6c757d;
-    }
-
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
-
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #f8f9fa;
-    }
-
-    #sidebar {
-  background: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  max-width: 320px;
-  font-size: 14px;
-  backdrop-filter: blur(4px);
-
-  background: linear-gradient(to bottom, #f8fbfc, #d9e9ef);
-  border: 2px solid #005f48;
-  border-radius: 12px;
-  padding: 15px 18px 40px 18px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.15);
-  backdrop-filter: blur(4px);
-
-  top: 80px !important;
-  left: 10px !important;
-      background: #ffffff;
-      border-left: 6px solid #005ea8;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    #sidebar h3 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #005ea8;
-    }
-
-    #sidebar label {
-      font-size: 14px;
-      display: block;
-      margin: 6px 0;
-    }
-
-    #sidebar input[type="checkbox"] {
-      margin-right: 6px;
-      transform: scale(1.1);
-    }
-
-    .leaflet-popup-content {
-      font-size: 13px;
-      line-height: 1.4;
-      color: #333333;
-    }
-
-    .leaflet-popup-content b {
-      color: #005ea8;
-    }
-
-    .leaflet-control-attribution {
-      font-size: 11px;
-      color: #6c757d;
-    }
-
-    .leaflet-container {
-      background: #dfe6ec;
-    }
-
-    html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  #map {
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-    #sidebar {
-  background: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  max-width: 320px;
-  font-size: 14px;
-  backdrop-filter: blur(4px);
-
-  background: linear-gradient(to bottom, #f8fbfc, #d9e9ef);
-  border: 2px solid #005f48;
-  border-radius: 12px;
-  padding: 15px 18px 40px 18px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.15);
-  backdrop-filter: blur(4px);
-
-  top: 80px !important;
-  left: 10px !important;
-      position: absolute;
-      top: 10px;
-      right: 10px;
+      /* División visual sutil */
+      border-bottom: 2px solid #f8fbfc;
       z-index: 1000;
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      width: 280px;
-      max-height: 90%;
-      overflow-y: auto;
-      font-family: sans-serif;
     }
-    .ok { color: green; margin: 5px 0; }
-    .error { color: red; margin: 5px 0; }
-  
-}
+    #sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      /* Estilo original de sidebar */
+      background: linear-gradient(to bottom, #f8fbfc, #d9e9ef);
+      border: 2px solid #005f48;
+      border-radius: 12px;
+      padding: 15px 18px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.15);
+      backdrop-filter: blur(4px);
+      overflow-y: auto;
+      z-index: 900;
+    }
+    #map {
+      position: fixed;
+      top: 60px;
+      left: 280px;
+      right: 0;
+      bottom: 0;
+    }
+    /* Ajustes responsivos */
+    @media (max-width: 768px) {
+      .topbar {
+        height: 50px;
+        font-size: 1rem;
+        padding: 6px 12px;
+      }
+      #sidebar {
+        top: 50px;
+        width: 240px;
+      }
+      #map {
+        top: 50px;
+        left: 240px;
+      }
+    }
+  </style>
 
-body > div.topbar + div {
-  display: none !important;
-}
-
-
-#map {
-  position: absolute;
-  top: 48px; /* ajustado a la altura real de .topbar */
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-
-#map {
-  position: absolute;
-  top: 60px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-/* Mobile responsive sidebar */
-#sidebar-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 1100; background: #127a5e; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 20px; }
-@media (max-width: 768px) {
-  #sidebar {
-    position: fixed !important;
-    top: 60px !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 250px !important;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-    z-index: 1002;
-  }
-  body.sidebar-open #sidebar {
-    transform: translateX(0);
-  }
-  #sidebar-toggle {
-    display: block;
-  }
-}
-
-</style>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js">
 // Sidebar toggle for mobile
 const sidebarToggle = document.getElementById('sidebar-toggle');
@@ -284,7 +99,197 @@ map.on('click', () => {
 #sidebar .layer-checkbox {
   margin-bottom: 30px !important;
 }
-</style></head>
+</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    /* --- Layout Global Fijo --- */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    /* Contenedor principal con topbar y sidebar fijos */
+    body {
+      position: relative;
+      overflow: hidden;
+    }
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #127a5e;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      text-align: center;
+      font-size: 1.25rem;
+      padding: 0 1rem;
+      line-height: 1.2;
+    }
+    #sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      background: #ffffff;
+      overflow-y: auto;
+      padding: 1rem;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+      z-index: 900;
+    }
+    #map {
+      position: fixed;
+      top: 60px;
+      left: 280px;
+      right: 0;
+      bottom: 0;
+    }
+    /* Responsivo: ajustar font y padding */
+    @media (max-width: 768px) {
+      .topbar {
+        font-size: 1rem;
+        height: 50px;
+        padding: 0 0.5rem;
+      }
+      #sidebar {
+        top: 50px;
+        width: 240px;
+      }
+      #map {
+        top: 50px;
+        left: 240px;
+      }
+    }
+  </style>
+
+
+<style>
+  /* Esquinas superiores redondeadas en el panel sin afectar estilos previos */
+  #sidebar {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+  }
+</style>
+
+
+<style>
+  /* Mostrar radios superiores: levantar el panel 2px para que se vean */
+  #sidebar {
+    top: 62px !important;               /* 60px de topbar + 2px de division */
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+  }
+</style>
+
+
+<style>
+  /* Divisor sutil en la topbar */
+  .topbar {
+    border-bottom: 2px solid #f8fbfc !important;
+    z-index: 1002 !important;
+  }
+  /* Panel: esquinas superiores redondeadas y posicionado bajo el divisor */
+  #sidebar {
+    position: fixed !important;
+    top: calc(60px + 2px) !important; /* altura topbar + borde */
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    overflow: visible !important;
+    z-index: 1001 !important;
+  }
+  /* Ajuste del mapa para respetar nuevo top */
+  #map {
+    top: calc(60px + 2px) !important;
+  }
+</style>
+
+
+<style>
+  /* Meta viewport */
+  @viewport { width: device-width; initial-scale: 1.0; }
+  /* Topbar fija con división */
+  .topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 60px !important;
+    background: linear-gradient(to right, #127a5e, #198d72) !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 1.25rem !important;
+    font-weight: bold !important;
+    padding: 8px 20px !important;
+    line-height: 1.2 !important;
+    text-shadow: 1px 1px #075f46 !important;
+    border-bottom: 2px solid #f8fbfc !important;
+    z-index: 1000 !important;
+  }
+  /* Sidebar con bordes completos y top corners visibles */
+  #sidebar {
+    position: fixed !important;
+    top: calc(60px + 2px) !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 280px !important;
+    background: linear-gradient(to bottom, #f8fbfc, #d9e9ef) !important;
+    border: 2px solid #005f48 !important;
+    border-radius: 12px !important;
+    /* Asegurar top corners se ven */
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    padding: 15px 18px !important;
+    box-shadow: 0 0 12px rgba(0,0,0,0.15) !important;
+    overflow-y: auto !important;
+    z-index: 900 !important;
+  }
+  /* Mapa se ajusta al espacio restante */
+  #map {
+    position: fixed !important;
+    top: calc(60px + 2px) !important;
+    left: 280px !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    overflow: hidden !important;
+  }
+  /* Responsivo: ajustar tamaños */
+  @media (max-width: 768px) {
+    .topbar {
+      height: 50px !important;
+      font-size: 1rem !important;
+      padding: 6px 12px !important;
+    }
+    #sidebar {
+      top: calc(50px + 2px) !important;
+      width: 240px !important;
+    }
+    #map {
+      top: calc(50px + 2px) !important;
+      left: 240px !important;
+    }
+  }
+</style>
+
+
+<style>
+  /* Sobrescribir header interno azul a verde */
+  #sidebar div[style*="background-color:#005ea8"] {
+    background: linear-gradient(to right, #127a5e, #198d72) !important;
+    border-radius: 6px !important;
+    padding: 12px !important;
+    color: white !important;
+  }
+</style>
+
+</head>
 <body>
 <button id="sidebar-toggle">☰</button>
 <div class="topbar" style="position: fixed; top: 0; width: 100%; z-index: 1100; z-index: 1001; text-align: center; font-size: 20px; padding: 12px 10px;">
