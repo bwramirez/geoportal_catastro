@@ -1,0 +1,900 @@
+
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Visor por demanda - Geoportal Santa Rosa</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" rel="stylesheet"/>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #e4f1f9;
+      margin: 0;
+    }
+
+    #sidebar {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  max-width: 320px;
+  font-size: 14px;
+  backdrop-filter: blur(4px);
+
+  background: linear-gradient(to bottom, #f8fbfc, #d9e9ef);
+  border: 2px solid #005f48;
+  border-radius: 12px;
+  padding: 15px 18px 40px 18px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  backdrop-filter: blur(4px);
+
+  top: 80px !important;
+  left: 10px !important;
+      background: #d1ecf9;
+      border: 2px solid #127a5e;
+      border-radius: 8px;
+      padding: 10px 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    #sidebar h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0d5c4d;
+      border-bottom: 1px solid #127a5e;
+      padding-bottom: 4px;
+    }
+
+    #sidebar label {
+      font-size: 13px;
+      display: block;
+      margin: 5px 0;
+      color: #0d5c4d;
+    }
+
+    #sidebar input[type="checkbox"] {
+      margin-right: 6px;
+      transform: scale(1.1);
+      accent-color: #127a5e;
+    }
+
+    .leaflet-popup-content {
+      font-size: 12.5px;
+      line-height: 1.4;
+      color: #1c1c1c;
+    }
+
+    .leaflet-popup-content b {
+      color: #127a5e;
+    }
+
+    .leaflet-container {
+      background: #dcecf4;
+    }
+
+    #sidebar div[style*="background-color:#005ea8"] {
+      background-color: #127a5e !important;
+      border-radius: 6px;
+      box-shadow: inset 0 0 0 2px #ffffff;
+    }
+
+    #sidebar h2 {
+      font-family: 'Roboto', sans-serif;
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+
+    .topbar {
+      width: 100%;
+      background: linear-gradient(to right, #127a5e, #198d72);
+      color: white;
+      padding: 8px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      text-shadow: 1px 1px #075f46;
+    }
+
+    .leaflet-control-attribution {
+      font-size: 10px;
+      color: #6c757d;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    #sidebar {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  max-width: 320px;
+  font-size: 14px;
+  backdrop-filter: blur(4px);
+
+  background: linear-gradient(to bottom, #f8fbfc, #d9e9ef);
+  border: 2px solid #005f48;
+  border-radius: 12px;
+  padding: 15px 18px 40px 18px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  backdrop-filter: blur(4px);
+
+  top: 80px !important;
+  left: 10px !important;
+      background: #ffffff;
+      border-left: 6px solid #005ea8;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    #sidebar h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #005ea8;
+    }
+
+    #sidebar label {
+      font-size: 14px;
+      display: block;
+      margin: 6px 0;
+    }
+
+    #sidebar input[type="checkbox"] {
+      margin-right: 6px;
+      transform: scale(1.1);
+    }
+
+    .leaflet-popup-content {
+      font-size: 13px;
+      line-height: 1.4;
+      color: #333333;
+    }
+
+    .leaflet-popup-content b {
+      color: #005ea8;
+    }
+
+    .leaflet-control-attribution {
+      font-size: 11px;
+      color: #6c757d;
+    }
+
+    .leaflet-container {
+      background: #dfe6ec;
+    }
+
+    html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #map {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+    #sidebar {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  max-width: 320px;
+  font-size: 14px;
+  backdrop-filter: blur(4px);
+
+  background: linear-gradient(to bottom, #f8fbfc, #d9e9ef);
+  border: 2px solid #005f48;
+  border-radius: 12px;
+  padding: 15px 18px 40px 18px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  backdrop-filter: blur(4px);
+
+  top: 80px !important;
+  left: 10px !important;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 280px;
+      max-height: 90%;
+      overflow-y: auto;
+      font-family: sans-serif;
+    }
+    .ok { color: green; margin: 5px 0; }
+    .error { color: red; margin: 5px 0; }
+  
+}
+
+body > div.topbar + div {
+  display: none !important;
+}
+
+
+#map {
+  position: absolute;
+  top: 48px; /* ajustado a la altura real de .topbar */
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+
+#map {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Mobile responsive sidebar */
+#sidebar-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 1100; background: #127a5e; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 20px; }
+@media (max-width: 768px) {
+  #sidebar {
+    position: fixed !important;
+    top: 60px !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 250px !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1002;
+  }
+  body.sidebar-open #sidebar {
+    transform: translateX(0);
+  }
+  #sidebar-toggle {
+    display: block;
+  }
+}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js">
+// Sidebar toggle for mobile
+const sidebarToggle = document.getElementById('sidebar-toggle');
+sidebarToggle.addEventListener('click', () => {
+  document.body.classList.toggle('sidebar-open');
+});
+// Close sidebar on map click (mobile)
+map.on('click', () => {
+  if (document.body.classList.contains('sidebar-open')) {
+    document.body.classList.remove('sidebar-open');
+  }
+});
+
+</script>
+<style>
+#sidebar .layer-checkbox {
+  margin-bottom: 30px !important;
+}
+</style></head>
+<body>
+<button id="sidebar-toggle">☰</button>
+<div class="topbar" style="position: fixed; top: 0; width: 100%; z-index: 1100; z-index: 1001; text-align: center; font-size: 20px; padding: 12px 10px;">
+  GEOPORTAL DE CATASTRO RURAL DEL CANTÓN SANTA ROSA
+</div><div id="sidebar">
+<!-- Botón para ingresar datos de campo -->
+<div style="text-align:center; margin-bottom:15px;">
+<button onclick="mostrarFormulario()" style="background:#127a5e; color:white; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">
+    ➕ Ingresar Datos de Campo
+  </button>
+</div>
+<!-- Formulario oculto inicialmente -->
+<form id="formulario-campo" style="display:none; padding:10px; background:#f0f5f4; border-left:4px solid #127a5e; border-radius:6px; margin-bottom:12px;">
+<label>Nombre y Apellido:<input id="nombre" style="width:100%;" type="text"/></label>
+<label>Uso o Cultivo del Lote:<input id="uso" style="width:100%;" type="text"/></label>
+<label>Valor Comercial por Hectárea:<input id="valor" style="width:100%;" type="number"/></label>
+<label>Ubicación del Lote:
+<button onclick="usarUbicacion()" style="background:#198d72; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer; margin:5px 0;">📍 Usar ubicación del dispositivo</button>
+<small>O haz clic en el mapa (dentro del cantón) para seleccionar el punto</small>
+</label>
+<div id="ubicacion-coordenadas" style="margin-top:8px; font-size:13px; color:#333;"></div>
+<button style="margin-top:10px; background:#005ea8; color:white; border:none; padding:8px 14px; border-radius:4px; cursor:pointer;" type="submit">Guardar Datos</button>
+</form>
+<div style="background-color:#005ea8; color:white; padding:12px; border-radius:6px; text-align:center; margin-bottom:12px;">
+<h2 style="margin:0; font-size:16px;">GEOPORTAL DE<span style="color:#ffd500;">CATASTRO RURAL</span></h2>
+</div>
+<div class="layer-checkbox"><label style="display: flex; align-items: center; gap: 8px; margin: 8px 0; background:#f0f5f4; padding: 6px 10px; border-radius: 6px; border-left: 4px solid #127a5e;"><input id="limite-cantonal" type="checkbox"/> Límite Cantonal</label></div>
+<div class="layer-checkbox"><label style="display: flex; align-items: center; gap: 8px; margin: 8px 0; background:#f0f5f4; padding: 6px 10px; border-radius: 6px; border-left: 4px solid #127a5e;"><input id="catastro" type="checkbox"/> Catastro</label></div>
+<div class="layer-checkbox"><label style="display: flex; align-items: center; gap: 8px; margin: 8px 0; background:#f0f5f4; padding: 6px 10px; border-radius: 6px; border-left: 4px solid #127a5e;"><input id="pits-rurales" type="checkbox"/> PITs Rurales</label><div id="legend-pits" style="margin-top:10px; display:none; font-size:13px;"></div></div>
+<div class="layer-checkbox"><label style="display: flex; align-items: center; gap: 8px; margin: 8px 0; background:#f0f5f4; padding: 6px 10px; border-radius: 6px; border-left: 4px solid #127a5e;"><input id="subclasificacion" type="checkbox"/> Subclasificación</label><div id="legend-subclasificacion" style="margin-top:10px; display:none; font-size:13px;"></div></div>
+<div class="layer-checkbox"><label style="display: flex; align-items: center; gap: 8px; margin: 8px 0; background:#f0f5f4; padding: 6px 10px; border-radius: 6px; border-left: 4px solid #127a5e;"><input id="uso-productivo" type="checkbox"/> Uso Productivo</label><div id="legend-uso" style="margin-top:10px; display:none; font-size:13px;"></div></div><div class="layer-checkbox"><label style="display: flex; align-items: center; gap: 8px; margin: 8px 0 16px 0; background:#f0f5f4; padding: 6px 10px; border-radius: 6px; border-left: 4px solid #127a5e;">
+<input id="datos-campo" type="checkbox"/> Datos de Campo
+</label><div id="legend-datos-campo" style="margin-top:10px; display:none; font-size:13px;"></div></div>
+</div>
+<div id="map" style="margin-top:0px;"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+const supabaseUrl = 'https://pnizwxmvobftuwmxuvph.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBuaXp3eG12b2JmdHV3bXh1dnBoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyOTE3NjMsImV4cCI6MjA2NTg2Nzc2M30.zSCBm98EZ3b5y-CnRhE1Nbnq9FizWEvo8nxn34Z4UcQ';
+
+const map = L.map('map', { zoomControl: false });
+let limiteCantonalLayer = null;
+
+async function cargarLimiteCantonalInvisible() {
+  const data = await fetchAll("limite_cantonal_geojson");
+  const features = data.map(item => {
+    return {
+      type: "Feature",
+      geometry: JSON.parse(item.geometry),
+      properties: item.properties
+    };
+  });
+
+  limiteCantonalLayer = L.geoJSON(features, {
+    style: () => ({
+      color: "#00000000",  // Totalmente invisible
+      weight: 0,
+      fillOpacity: 0
+    })
+  });
+
+  // No se añade al mapa, solo se usa para validación
+}
+
+cargarLimiteCantonalInvisible();
+
+const bounds = L.latLngBounds([-3.65, -80.05], [-3.35, -79.85]);
+map.fitBounds(bounds);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+const config = {
+  'datos-campo': { view: 'vista_datos_campo_geojson', color: '#e67e22', name: 'Datos de Campo' },
+  'limite-cantonal': { view: 'limite_cantonal_geojson', color: '#e74c3c', name: 'Límite Cantonal' },
+  'catastro': { view: 'catastro_geojson', color: '#f39c12', name: 'Catastro' },
+  'pits-rurales': { view: 'pits_rurales_geojson', color: '#9b59b6', name: 'PITs Rurales' },
+  'subclasificacion': { view: 'subclasificacion_geojson', color: '#27ae60', name: 'Subclasificación' },
+  'uso-productivo': { view: 'uso_productivo_geojson', color: '#3498db', name: 'Uso Productivo' }
+};
+
+const layers = {};
+
+async function fetchAll(view) {
+  let offset = 0, limit = 1000, all = [];
+  while (true) {
+    const res = await fetch(`${supabaseUrl}/rest/v1/${view}?select=*&offset=${offset}&limit=${limit}`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+    const json = await res.json();
+    all = all.concat(json);
+    if (json.length < limit) break;
+    offset += limit;
+  }
+  return all;
+}
+
+
+function getPitsStyle(properties) {
+  const colorMap = {
+    "Areas de expansion urbana": "#e6194b",
+    "Areas urbanas": "#3cb44b",
+    "Bosque y vegetacion protectora": "#ffe119",
+    "Centralidades rurales": "#0082c8",
+    "Concesiones mineras no metálicas": "#f58231",
+    "Cuerpos y cursos de agua": "#911eb4",
+    "Infraestructura antrópica - camaroneras": "#46f0f0",
+    "Uso de la tierra para fines agroforestales": "#f032e6",
+    "Uso de la tierra para fines agropecuarios": "#d2f53c",
+    "Uso de la tierra para fines de conservación y protección activa": "#fabebe",
+    "Uso de la tierra para fines de conservación y protección estricta": "#008080",
+    "Uso de la tierra para fines especiales": "#e6beff",
+    "Uso sustentable y custodia del manglar": "#aa6e28",
+    "Zona de desarrollo industrial": "#fffac8",
+    "Zona de protección del humedal la Tembladera": "#800000",
+    "Zona de protección hídrica": "#aaffc3"
+  };
+  const val = properties["pits"];
+  return {
+    color: colorMap[val] || "#999999",
+    weight: 1,
+    fillOpacity: 0.3
+  };
+}
+
+
+
+function getSubclasifiStyle(properties) {
+  const colorMap = {
+    "Consolidado": "#1f77b4",
+    "Expansión urbana": "#ff7f0e",
+    "Extractivo": "#2ca02c",
+    "No consolidado": "#d62728",
+    "Productivo": "#9467bd",
+    "Protección": "#8c564b"
+  };
+  const val = properties["subclasifi"];
+  return {
+    color: colorMap[val] || "#999999",
+    weight: 1,
+    fillOpacity: 0.3
+  };
+}
+
+
+
+function getUsoCobertStyle(properties) {
+  const colorMap = {
+    "ARROZ": "#1f77b4",
+    "BANANO": "#aec7e8",
+    "BANCO DE ARENA": "#ff7f0e",
+    "BARBECHO": "#ffbb78",
+    "BOSQUE DECIDUO DE TIERRAS BAJAS DE LA COSTA": "#2ca02c",
+    "BOSQUE SEMIDECIDUO DE LAS CORDILLERAS COSTERAS": "#98df8a",
+    "BOSQUE SIEMPREVERDE DE TIERRAS BAJAS DE LA COSTA": "#d62728",
+    "CACAO": "#ff9896",
+    "CAMARONERA": "#9467bd",
+    "CANTERA": "#c5b0d5",
+    "CAÑA DE AZÚCAR (ARTESANAL)": "#8c564b",
+    "CAOBA": "#c49c94",
+    "CEMENTERIO": "#e377c2",
+    "CENTRO POBLADO": "#f7b6d2",
+    "COMPLEJO AEROPORTUARIO": "#7f7f7f",
+    "COMPLEJO INDUSTRIAL": "#c7c7c7",
+    "EMBALSE": "#bcbd22",
+    "LAGUNA": "#dbdb8d",
+    "MANGLAR": "#17becf",
+    "MARACUYÁ": "#9edae5",
+    "MATORRAL ESPINOSO LITORAL": "#fbb4ae",
+    "MATORRAL SECO DE TIERRAS BAJAS DE LA COSTA": "#b3cde3",
+    "MINA": "#ccebc5",
+    "MISCELÁNEO INDEFERENCIADO": "#decbe4",
+    "NO APLICABLE": "#fed9a6",
+    "PACHACO": "#ffffcc",
+    "PASTO CULTIVADO": "#e5d8bd",
+    "PASTO CULTIVADO CON PRESENCIA DE ÁRBOLES": "#fddaec",
+    "PLÁTANO": "#f2f2f2",
+    "PLAYA": "#f0f8ff",
+    "POZA": "#faebd7",
+    "PROCESO DE EROSIÓN": "#00ffff",
+    "RIOS DOBLES": "#7fffd4",
+    "S/I": "#f0ffff",
+    "SALINAS": "#f5f5dc",
+    "SILVO PASTORIL": "#ffe4c4",
+    "TECA": "#000000",
+    "URBANO": "#ffebcd"
+  };
+  const val = properties["uso_cobert"];
+  return {
+    color: colorMap[val] || "#999999",
+    weight: 1,
+    fillOpacity: 0.3
+  };
+}
+
+
+async function toggleLayer(id, checked) {
+  if (checked) {
+    if (!layers[id]) {
+    if (id === 'datos-campo') {
+  // 1) Traemos los registros de supabase
+  let dataCampo = [];
+  try {
+    dataCampo = await fetchAll('vista_datos_campo_geojson');
+  } catch (err) {
+    console.error("❌ Error al cargar Datos de Campo:", err);
+    alert("Error al cargar la capa Datos de Campo.");
+    return;
+  }
+
+  // 2) Creamos un icono de marcador (pin)
+  const pinIcon = L.icon({
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+    shadowUrl:   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize:    [25, 41],
+    iconAnchor:  [12, 41],
+    popupAnchor: [1, -34]
+  });
+
+  const group = L.layerGroup();
+  dataCampo.forEach(item => {
+    try {
+      let g = item.geometry;
+    if (typeof g === 'string') {
+      g = JSON.parse(g);
+    }      // GeoJSON
+      const [lon, lat] = g.coordinates;
+      const marker = L.marker([lat, lon], { icon: pinIcon });
+      marker.bindPopup(
+        `<b>${item.nombre}</b><br>Uso: ${item.uso}<br>Valor: $${item.valor} / ha`
+      );
+      group.addLayer(marker);
+    } catch(e) {
+      console.warn("Registro inválido en Datos de Campo:", e, item);
+    }
+  });
+
+  layers[id] = group;
+  group.addTo(map);
+  return;
+}
+
+      try {
+        let data = [];
+      try {
+        data = await fetchAll(config[id].view);
+      } catch (err) {
+        console.error("❌ Error al cargar datos de campo:", err);
+        alert("Error al cargar la capa Datos de Campo.");
+        return;
+      }
+        const group = L.layerGroup();
+        data.forEach(item => {
+          try {
+            let g = item.geometry;
+    if (typeof g === 'string') {
+      g = JSON.parse(g);
+    }
+            const f = { type: 'Feature', geometry: g, properties: item.properties };
+            const layer = L.geoJSON(f, {
+              style: (feature) => {
+                if (id === 'pits-rurales') return getPitsStyle(feature.properties);
+      if (id === 'subclasificacion') return getSubclasifiStyle(feature.properties);
+      if (id === 'uso-productivo') return getUsoCobertStyle(feature.properties);
+      return { color: config[id].color, weight: 1, fillOpacity: 0.3 };
+              },
+              onEachFeature: function (feature, layer) {
+                let popupContent = `<strong>${config[id].name}</strong><br>`;
+                if ('pits' in feature.properties) {
+                  popupContent += `<b>pits</b>: ${feature.properties['pits']}<br>`;
+                }
+                if ('subclasifi' in feature.properties) {
+                  popupContent += `<b>subclasifi</b>: ${feature.properties['subclasifi']}<br>`;
+                }
+                if ('uso_cobert' in feature.properties) {
+                  popupContent += `<b>uso_cobert</b>: ${feature.properties['uso_cobert']}<br>`;
+                }
+                for (const key in feature.properties) {
+                  if (key !== 'subclasifi' && key !== 'uso_cobert' && key !== 'pits') {
+                    popupContent += `<b>${key}</b>: ${feature.properties[key]}<br>`;
+                  }
+                }
+                layer.bindPopup(popupContent);
+              }
+            });
+            group.addLayer(layer);
+          } catch (e) {}
+        });
+        layers[id] = group;
+        group.addTo(map);
+    if (id === 'subclasificacion') {
+      const legend = document.getElementById("legend-subclasificacion");
+      legend.style.display = "block";
+      legend.innerHTML = "<h4 style='margin:6px 0;color:#127a5e;'>Leyenda Subclasificación</h4>" +
+        Object.entries({
+          "Consolidado": "#1f77b4",
+          "Expansión urbana": "#ff7f0e",
+          "Extractivo": "#2ca02c",
+          "No consolidado": "#d62728",
+          "Productivo": "#9467bd",
+          "Protección": "#8c564b"
+        }).sort((a,b)=>a[0].localeCompare(b[0])).map(([key, color]) =>
+          `<div style='display:flex;align-items:center;margin:4px 0;'>
+            <div style='width:14px;height:14px;background:${color};margin-right:8px;border-radius:2px;'></div> ${key}
+          </div>`).join("");
+    }
+    if (id === 'uso-productivo') {
+      const legend = document.getElementById("legend-uso");
+      legend.style.display = "block";
+      legend.innerHTML = "<h4 style='margin:6px 0;color:#127a5e;'>Leyenda Uso Productivo</h4>" +
+        Object.entries({
+          "ARROZ": "#1f77b4", "BANANO": "#aec7e8", "BANCO DE ARENA": "#ff7f0e", "BARBECHO": "#ffbb78",
+          "BOSQUE DECIDUO DE TIERRAS BAJAS DE LA COSTA": "#2ca02c", "BOSQUE SEMIDECIDUO DE LAS CORDILLERAS COSTERAS": "#98df8a",
+          "BOSQUE SIEMPREVERDE DE TIERRAS BAJAS DE LA COSTA": "#d62728", "CACAO": "#ff9896", "CAMARONERA": "#9467bd",
+          "CANTERA": "#c5b0d5", "CAÑA DE AZÚCAR (ARTESANAL)": "#8c564b", "CAOBA": "#c49c94", "CEMENTERIO": "#e377c2",
+          "CENTRO POBLADO": "#f7b6d2", "COMPLEJO AEROPORTUARIO": "#7f7f7f", "COMPLEJO INDUSTRIAL": "#c7c7c7",
+          "EMBALSE": "#bcbd22", "LAGUNA": "#dbdb8d", "MANGLAR": "#17becf", "MARACUYÁ": "#9edae5",
+          "MATORRAL ESPINOSO LITORAL": "#fbb4ae", "MATORRAL SECO DE TIERRAS BAJAS DE LA COSTA": "#b3cde3",
+          "MINA": "#ccebc5", "MISCELÁNEO INDEFERENCIADO": "#decbe4", "NO APLICABLE": "#fed9a6", "PACHACO": "#ffffcc",
+          "PASTO CULTIVADO": "#e5d8bd", "PASTO CULTIVADO CON PRESENCIA DE ÁRBOLES": "#fddaec", "PLÁTANO": "#f2f2f2",
+          "PLAYA": "#f0f8ff", "POZA": "#faebd7", "PROCESO DE EROSIÓN": "#00ffff", "RIOS DOBLES": "#7fffd4",
+          "S/I": "#f0ffff", "SALINAS": "#f5f5dc", "SILVO PASTORIL": "#ffe4c4", "TECA": "#000000", "URBANO": "#ffebcd"
+        }).sort((a,b)=>a[0].localeCompare(b[0])).map(([key, color]) =>
+          `<div style='display:flex;align-items:center;margin:4px 0;'>
+            <div style='width:14px;height:14px;background:${color};margin-right:8px;border-radius:2px;'></div> ${key}
+          </div>`).join("");
+    }
+      if (id === 'pits-rurales') {
+        const legend = document.getElementById("legend-pits");
+        legend.style.display = "block";
+        legend.innerHTML = "<h4 style='margin:6px 0;color:#127a5e;'>Leyenda PITs Rurales</h4>" +
+          Object.entries({
+            "Areas de expansion urbana": "#e6194b",
+            "Areas urbanas": "#3cb44b",
+            "Bosque y vegetacion protectora": "#ffe119",
+            "Centralidades rurales": "#0082c8",
+            "Concesiones mineras no metálicas": "#f58231",
+            "Cuerpos y cursos de agua": "#911eb4",
+            "Infraestructura antrópica - camaroneras": "#46f0f0",
+            "Uso de la tierra para fines agroforestales": "#f032e6",
+            "Uso de la tierra para fines agropecuarios": "#d2f53c",
+            "Uso de la tierra para fines de conservación y protección activa": "#fabebe",
+            "Uso de la tierra para fines de conservación y protección estricta": "#008080",
+            "Uso de la tierra para fines especiales": "#e6beff",
+            "Uso sustentable y custodia del manglar": "#aa6e28",
+            "Zona de desarrollo industrial": "#fffac8",
+            "Zona de protección del humedal la Tembladera": "#800000",
+            "Zona de protección hídrica": "#aaffc3"
+          }).sort((a,b)=>a[0].localeCompare(b[0])).map(([key, color]) =>
+            `<div style='display:flex;align-items:center;margin:4px 0;'>
+              <div style='width:14px;height:14px;background:${color};margin-right:8px;border-radius:2px;'></div> ${key}
+            </div>`).join("");
+      }
+
+      } catch (err) {}
+    } else {
+      map.addLayer(layers[id]);
+    if (id === 'subclasificacion') {
+      const legend = document.getElementById("legend-subclasificacion");
+      legend.style.display = "block";
+      legend.innerHTML = "<h4 style='margin:6px 0;color:#127a5e;'>Leyenda Subclasificación</h4>" +
+        Object.entries({
+          "Consolidado": "#1f77b4",
+          "Expansión urbana": "#ff7f0e",
+          "Extractivo": "#2ca02c",
+          "No consolidado": "#d62728",
+          "Productivo": "#9467bd",
+          "Protección": "#8c564b"
+        }).sort((a,b)=>a[0].localeCompare(b[0])).map(([key, color]) =>
+          `<div style='display:flex;align-items:center;margin:4px 0;'>
+            <div style='width:14px;height:14px;background:${color};margin-right:8px;border-radius:2px;'></div> ${key}
+          </div>`).join("");
+    }
+    if (id === 'uso-productivo') {
+      const legend = document.getElementById("legend-uso");
+      legend.style.display = "block";
+      legend.innerHTML = "<h4 style='margin:6px 0;color:#127a5e;'>Leyenda Uso Productivo</h4>" +
+        Object.entries({
+          "ARROZ": "#1f77b4", "BANANO": "#aec7e8", "BANCO DE ARENA": "#ff7f0e", "BARBECHO": "#ffbb78",
+          "BOSQUE DECIDUO DE TIERRAS BAJAS DE LA COSTA": "#2ca02c", "BOSQUE SEMIDECIDUO DE LAS CORDILLERAS COSTERAS": "#98df8a",
+          "BOSQUE SIEMPREVERDE DE TIERRAS BAJAS DE LA COSTA": "#d62728", "CACAO": "#ff9896", "CAMARONERA": "#9467bd",
+          "CANTERA": "#c5b0d5", "CAÑA DE AZÚCAR (ARTESANAL)": "#8c564b", "CAOBA": "#c49c94", "CEMENTERIO": "#e377c2",
+          "CENTRO POBLADO": "#f7b6d2", "COMPLEJO AEROPORTUARIO": "#7f7f7f", "COMPLEJO INDUSTRIAL": "#c7c7c7",
+          "EMBALSE": "#bcbd22", "LAGUNA": "#dbdb8d", "MANGLAR": "#17becf", "MARACUYÁ": "#9edae5",
+          "MATORRAL ESPINOSO LITORAL": "#fbb4ae", "MATORRAL SECO DE TIERRAS BAJAS DE LA COSTA": "#b3cde3",
+          "MINA": "#ccebc5", "MISCELÁNEO INDEFERENCIADO": "#decbe4", "NO APLICABLE": "#fed9a6", "PACHACO": "#ffffcc",
+          "PASTO CULTIVADO": "#e5d8bd", "PASTO CULTIVADO CON PRESENCIA DE ÁRBOLES": "#fddaec", "PLÁTANO": "#f2f2f2",
+          "PLAYA": "#f0f8ff", "POZA": "#faebd7", "PROCESO DE EROSIÓN": "#00ffff", "RIOS DOBLES": "#7fffd4",
+          "S/I": "#f0ffff", "SALINAS": "#f5f5dc", "SILVO PASTORIL": "#ffe4c4", "TECA": "#000000", "URBANO": "#ffebcd"
+        }).sort((a,b)=>a[0].localeCompare(b[0])).map(([key, color]) =>
+          `<div style='display:flex;align-items:center;margin:4px 0;'>
+            <div style='width:14px;height:14px;background:${color};margin-right:8px;border-radius:2px;'></div> ${key}
+          </div>`).join("");
+    }
+    if (id === 'uso-productivo') {
+      const legend = document.getElementById("legend-uso");
+      legend.style.display = "block";
+      legend.innerHTML = "<h4 style='margin:6px 0;color:#127a5e;'>Leyenda Uso Productivo</h4>" +
+        Object.entries({
+          "ARROZ": "#1f77b4", "BANANO": "#aec7e8", "BANCO DE ARENA": "#ff7f0e", "BARBECHO": "#ffbb78",
+          "BOSQUE DECIDUO DE TIERRAS BAJAS DE LA COSTA": "#2ca02c", "BOSQUE SEMIDECIDUO DE LAS CORDILLERAS COSTERAS": "#98df8a",
+          "BOSQUE SIEMPREVERDE DE TIERRAS BAJAS DE LA COSTA": "#d62728", "CACAO": "#ff9896", "CAMARONERA": "#9467bd",
+          "CANTERA": "#c5b0d5", "CAÑA DE AZÚCAR (ARTESANAL)": "#8c564b", "CAOBA": "#c49c94", "CEMENTERIO": "#e377c2",
+          "CENTRO POBLADO": "#f7b6d2", "COMPLEJO AEROPORTUARIO": "#7f7f7f", "COMPLEJO INDUSTRIAL": "#c7c7c7",
+          "EMBALSE": "#bcbd22", "LAGUNA": "#dbdb8d", "MANGLAR": "#17becf", "MARACUYÁ": "#9edae5",
+          "MATORRAL ESPINOSO LITORAL": "#fbb4ae", "MATORRAL SECO DE TIERRAS BAJAS DE LA COSTA": "#b3cde3",
+          "MINA": "#ccebc5", "MISCELÁNEO INDEFERENCIADO": "#decbe4", "NO APLICABLE": "#fed9a6", "PACHACO": "#ffffcc",
+          "PASTO CULTIVADO": "#e5d8bd", "PASTO CULTIVADO CON PRESENCIA DE ÁRBOLES": "#fddaec", "PLÁTANO": "#f2f2f2",
+          "PLAYA": "#f0f8ff", "POZA": "#faebd7", "PROCESO DE EROSIÓN": "#00ffff", "RIOS DOBLES": "#7fffd4",
+          "S/I": "#f0ffff", "SALINAS": "#f5f5dc", "SILVO PASTORIL": "#ffe4c4", "TECA": "#000000", "URBANO": "#ffebcd"
+        }).sort((a,b)=>a[0].localeCompare(b[0])).map(([key, color]) =>
+          `<div style='display:flex;align-items:center;margin:4px 0;'>
+            <div style='width:14px;height:14px;background:${color};margin-right:8px;border-radius:2px;'></div> ${key}
+          </div>`).join("");
+    }
+    if (id === 'subclasificacion') {
+      const legend = document.getElementById("legend-subclasificacion");
+      legend.style.display = "block";
+      legend.innerHTML = "<h4 style='margin:6px 0;color:#127a5e;'>Leyenda Subclasificación</h4>" +
+        Object.entries({
+          "Consolidado": "#1f77b4",
+          "Expansión urbana": "#ff7f0e",
+          "Extractivo": "#2ca02c",
+          "No consolidado": "#d62728",
+          "Productivo": "#9467bd",
+          "Protección": "#8c564b"
+        }).sort((a,b)=>a[0].localeCompare(b[0])).map(([key, color]) =>
+          `<div style='display:flex;align-items:center;margin:4px 0;'>
+            <div style='width:14px;height:14px;background:${color};margin-right:8px;border-radius:2px;'></div> ${key}
+          </div>`).join("");
+    }
+    if (id === 'pits-rurales') {
+      const legend = document.getElementById("legend-pits");
+      legend.style.display = "block";
+      legend.innerHTML = "<h4 style='margin:6px 0;color:#127a5e;'>Leyenda PITs Rurales</h4>" +
+        Object.entries({
+          "Areas de expansion urbana": "#e6194b",
+          "Areas urbanas": "#3cb44b",
+          "Bosque y vegetacion protectora": "#ffe119",
+          "Centralidades rurales": "#0082c8",
+          "Concesiones mineras no metálicas": "#f58231",
+          "Cuerpos y cursos de agua": "#911eb4",
+          "Infraestructura antrópica - camaroneras": "#46f0f0",
+          "Uso de la tierra para fines agroforestales": "#f032e6",
+          "Uso de la tierra para fines agropecuarios": "#d2f53c",
+          "Uso de la tierra para fines de conservación y protección activa": "#fabebe",
+          "Uso de la tierra para fines de conservación y protección estricta": "#008080",
+          "Uso de la tierra para fines especiales": "#e6beff",
+          "Uso sustentable y custodia del manglar": "#aa6e28",
+          "Zona de desarrollo industrial": "#fffac8",
+          "Zona de protección del humedal la Tembladera": "#800000",
+          "Zona de protección hídrica": "#aaffc3"
+        }).sort((a,b)=>a[0].localeCompare(b[0])).map(([key, color]) =>
+          `<div style='display:flex;align-items:center;margin:4px 0;'>
+            <div style='width:14px;height:14px;background:${color};margin-right:8px;border-radius:2px;'></div> ${key}
+          </div>`).join("");
+    }
+    }
+  } else {
+    if (layers[id]) map.removeLayer(layers[id]);
+    if (id === 'subclasificacion') {
+      const legend = document.getElementById("legend-subclasificacion");
+      legend.style.display = "none";
+    }
+    if (id === 'uso-productivo') {
+      const legend = document.getElementById("legend-uso");
+      legend.style.display = "none";
+    }
+    if (id === 'pits-rurales') {
+      const legend = document.getElementById("legend-pits");
+      legend.style.display = "none";
+    }
+  }
+}
+
+for (const id in config) {
+  const checkbox = document.getElementById(id);
+  checkbox.addEventListener('change', () => {
+    toggleLayer(id, checkbox.checked);
+  });
+}
+
+let puntoSeleccionado = null;
+
+function mostrarFormulario() {
+  const form = document.getElementById("formulario-campo");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+}
+
+function usarUbicacion() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lng = pos.coords.longitude.toFixed(6);
+      document.getElementById("ubicacion-coordenadas").innerText = `Ubicación: ${lat}, ${lng}`;
+      puntoSeleccionado = [lat, lng];
+    }, () => {
+      alert("No se pudo obtener la ubicación.");
+    });
+  } else {
+    alert("Geolocalización no soportada.");
+  }
+}
+
+map.on("click", function (e) {
+  if (!document.getElementById("formulario-campo").style.display.includes("block")) return;
+  const punto = e.latlng;
+  
+  let estaDentro = false;
+  limiteCantonalLayer.eachLayer(layer => {
+    if (turf.booleanPointInPolygon(turf.point([punto.lng, punto.lat]), layer.toGeoJSON())) {
+      estaDentro = true;
+    }
+  });
+
+  if (estaDentro) {
+    puntoSeleccionado = [punto.lat.toFixed(6), punto.lng.toFixed(6)];
+    document.getElementById("ubicacion-coordenadas").innerText = `Ubicación: ${puntoSeleccionado[0]}, ${puntoSeleccionado[1]}`;
+  } else {
+    alert("El punto está fuera del límite del Cantón Santa Rosa.");
+  }
+
+});
+
+function enviarFormulario() {
+  const nombre = document.getElementById("nombre").value.trim();
+  const uso = document.getElementById("uso").value.trim();
+  const valor = document.getElementById("valor").value.trim();
+
+  if (!nombre || !uso || !valor || !puntoSeleccionado) {
+    alert("Por favor completa todos los campos y selecciona una ubicación.");
+    return;
+  }
+
+  console.log("Datos capturados:", {
+    nombre, uso, valor, ubicacion: puntoSeleccionado
+  });
+
+  alert("✅ Datos capturados correctamente (consulta la consola para verlos).");
+}
+</script>
+<script>
+document.getElementById("formulario-campo").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const nombre = document.getElementById("nombre").value.trim();
+  const uso = document.getElementById("uso").value.trim();
+  const valor = parseFloat(document.getElementById("valor").value);
+
+  if (!puntoSeleccionado) {
+    alert("Primero seleccione una ubicación válida en el mapa.");
+    return;
+  }
+
+  if (isNaN(valor)) {
+    alert("Ingrese un valor válido para el terreno.");
+    return;
+  }
+
+  const [lat, lon] = puntoSeleccionado;
+
+  const geojsonPoint = {
+    type: "Point",
+    coordinates: [parseFloat(lon), parseFloat(lat)]
+  };
+
+  fetch("https://pnizwxmvobftuwmxuvph.supabase.co/rest/v1/rpc/insertar_dato_campo", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": supabaseKey,
+      "Authorization": `Bearer ${supabaseKey}`
+    },
+    body: JSON.stringify({
+      nombre: nombre,
+      uso: uso,
+      valor: valor,
+      geojson: geojsonPoint
+    })
+  })
+  .then(async res => {
+    const txt = await res.text();
+    if (!res.ok) throw new Error(txt);
+    alert("✅ Datos guardados con éxito.");
+
+    
+            if (document.getElementById('datos-campo').checked) {
+      if (layers['datos-campo']) {
+        map.removeLayer(layers['datos-campo']);
+        delete layers['datos-campo'];
+      }
+      toggleLayer('datos-campo', true);
+    }
+            
+    
+
+    document.getElementById("formulario-campo").reset();
+    document.getElementById("ubicacion-coordenadas").innerText = "";
+    puntoSeleccionado = null;
+  })
+  .catch(err => {
+    console.error("Error al guardar en Supabase:", err);
+    alert("❌ No se pudieron guardar los datos.\n\n" + err.message);
+  });
+});
+</script>
+</body>
+</html>
